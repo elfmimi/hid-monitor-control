@@ -1,0 +1,2 @@
+source "https://rubygems.org"
+gem "hidapi", ">=0.1.9"

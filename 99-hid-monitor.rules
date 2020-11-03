@@ -1,0 +1,2 @@
+SUBSYSTEM=="usb", ATTR{idVendor}=="056d", ATTR{idProduct}=="4059", MODE="666"
+KERNEL=="hidraw*", ATTRS{idVendor}=="056d", ATTRS{idProduct}=="4059", MODE="666"
