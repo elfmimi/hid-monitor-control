@@ -1,0 +1,10 @@
+{
+  "name": "hid-monitor-control",
+  "version": "1.0.0",
+  "description": "USB-HID Monitor Control",
+  "main": "hid-monitor-control.js",
+  "dependencies": {
+    "node-hid": "^2.0.0-0"
+  },
+  "devDependencies": {}
+}

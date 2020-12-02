@@ -2,7 +2,7 @@
 
 ## Documentation
 
-This is an attempt to control HID capable monitors.
+This is an attempt to control USB-HID capable display monitors.
 
 ## Supported monitor
 
@@ -13,3 +13,5 @@ This is an attempt to control HID capable monitors.
 * [ruby](../../tree/main/ruby)
 
 * [python](../../tree/main/python)
+
+* [node.js](../../tree/main/node)
