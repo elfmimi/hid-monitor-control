@@ -7,7 +7,8 @@ import ctypes
 import struct
 
 device_id_pairs = [
-    [0x056D, 0x4059] # EV2760
+    [0x056D, 0x4059], # EV2760
+    [0x056D, 0x4014], # EV2750
 ]
 
 def get_input_source_table(model):
@@ -16,12 +17,17 @@ def get_input_source_table(model):
             'DVI': 0x0200,
             'DisplayPort1': 0x0300,
             'DisplayPort2': 0x0301,
-            'HDMI': 0x0400 }
+            'HDMI': 0x0400 },
+        'EV2750': {
+            'DVI': 0x0200,
+            'DisplayPort': 0x0300,
+            'HDMI': 0x0400 },
     }
     return table[model]
 
 def lookup_input_source_alias(input):
     table = {
+        'DP': 'DisplayPort',
         'DP1': 'DisplayPort1',
         'DP2': 'DisplayPort2',
     }
@@ -154,11 +160,12 @@ try:
     # print(product_number)
 
     input_source_table = get_input_source_table(model_number)
-    # default to EV2760 because that is the only one known for now
+    # default to EV2760
     if not input_source_table:
         input_source_table = get_input_source_table('EV2760')
 
     if len(sys.argv) == 1:
+        print("%s (S/N: %s)"%(model_number, serial_number))
         num = 1
         if get_val(dev, 0x40) != 0:
             num = 2
@@ -222,9 +229,9 @@ try:
                 sel = None
                 btn = dat[8] * 256 + dat[7]
                 if btn == 0x20:
-                    sel = 'DisplayPort1'
+                    sel = 'DisplayPort1' if 'DisplayPort1' in input_source_table else 'DisplayPort'
                 elif btn == 0x10:
-                    sel = 'DisplayPort2'
+                    sel = 'DisplayPort2' if 'DisplayPort2' in input_source_table else None
                 elif btn == 0x08:
                     sel = 'HDMI'
                 elif btn == 0x04:

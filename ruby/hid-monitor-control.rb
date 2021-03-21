@@ -3,14 +3,16 @@ require 'hidapi'
 # https://rubygems.org/gems/hidapi/
 
 device_id_pairs = [
-  [0x056D, 0x4059] # EV2760
+  [0x056D, 0x4059], # EV2760
+  [0x056D, 0x4014], # EV2750
 ]
 
 $input_source_table = {
-  :EV2760 => { :DVI => 0x0200, :DisplayPort1 => 0x0300, :DisplayPort2 => 0x0301, :HDMI => 0x0400 }
+  :EV2760 => { :DVI => 0x0200, :DisplayPort1 => 0x0300, :DisplayPort2 => 0x0301, :HDMI => 0x0400 },
+  :EV2750 => { :DVI => 0x0200, :DisplayPort => 0x0300, :HDMI => 0x0400 },
 }
 
-$alias_table = { :DP1 => :DisplayPort1, :DP2 => :DisplayPort2 }
+$alias_table = { :DP => :DisplayPort, :DP1 => :DisplayPort1, :DP2 => :DisplayPort2 }
 
 def print_usage(input_source_table = nil)
   STDERR.printf("\nUsage: %s INPUT1 [INPUT2]\n", $0)
@@ -91,12 +93,12 @@ serial_number, model_number = (
   tmp = dev.get_feature_report(8, buffer_size = 25)
   [tmp[1..8], tmp[9...25].strip]
 )
-printf("%s (S/N: %s)\n", model_number, serial_number)
 
 input_source_table = $input_source_table[model_number.to_sym]
 input_source_table ||= $input_source_table[:EV2760] # default to EV2760
 
 if not ARGV[0] then
+  printf("%s (S/N: %s)\n", model_number, serial_number)
   if get_val(dev, 0x40) != 0
     set_val(dev, 0xF9, 0)
     val = get_val(dev, 0x48)
@@ -121,16 +123,16 @@ elsif ARGV[0].downcase == 'switcher'
       btn = dat[8].ord * 256 + dat[7].ord
       sel = nil
       if btn == 0x20 then
-        sel = 'DisplayPort1'
+        sel = if input_source_table[:DisplayPort1] then :DisplayPort1 else :DisplayPort end
       elsif btn == 0x10 then
-        sel = 'DisplayPort2'
+        sel = if input_source_table[:DisplayPort2] then :DisplayPort2 else nil end
       elsif btn == 0x08 then
-        sel = 'HDMI'
+        sel = :HDMI
       elsif btn == 0x04 then
-        sel = 'DVI'
+        sel = :DVI
       end
       if sel then
-        set_val(dev, 0x48, input_source_table[sel.intern])
+        set_val(dev, 0x48, input_source_table[sel])
       end
     end
   }

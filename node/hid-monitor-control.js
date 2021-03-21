@@ -13,7 +13,8 @@ HID = require('node-hid');
 HID.setDriverType('libusb');
 
 device_id_pairs = [
-    (0x056D, 0x4059) // EV2760
+    (0x056D, 0x4059), // EV2760
+    (0x056D, 0x4014), // EV2750
 ]
 
 function get_input_source_table(model) {
@@ -22,13 +23,18 @@ function get_input_source_table(model) {
             'DVI': 0x0200,
             'DisplayPort1': 0x0300,
             'DisplayPort2': 0x0301,
-            'HDMI': 0x0400 }
+            'HDMI': 0x0400 },
+        'EV2750': {
+            'DVI': 0x0200,
+            'DisplayPort': 0x0300,
+            'HDMI': 0x0400 },
     }
 	return table[model]
 }
 
 function lookup_input_source_alias(input) {
 	table = {
+        'DP': 'DisplayPort',
         'DP1': 'DisplayPort1',
         'DP2': 'DisplayPort2',
 	}
@@ -82,13 +88,12 @@ hid = new HID.HID(des.vendorId, des.productId)
 sn_pn = hid.getFeatureReport(8, 25);
 sn_pn = sn_pn.map(c => String.fromCharCode(c)).join('')
 serial_number = sn_pn.substring(1,9)
-product_name = sn_pn.substring(9, 25).replace(/ +$/, '')
-// console.log(serial_number, product_name)
+model_number = sn_pn.substring(9, 25).replace(/ +$/, '')
 
 // console.log('0x' + get_val(hid, 0x48).toString(16))
 
-input_source_table = get_input_source_table(product_name)
-// default to EV2760 because that is the only one known for now
+input_source_table = get_input_source_table(model_number)
+// default to EV2760
 if (!input_source_table) {
 	input_source_table = get_input_source_table('EV2760')
 }
@@ -100,6 +105,7 @@ if (process.argv.length > 4) {
 }
 
 if (process.argv.length == 2) {
+	console.log("%s (S/N: %s)", model_number, serial_number)
 	// console.log('0x' + get_val(hid, 0x48).toString(16))
 	num = 1
 	if (get_val(hid, 0x40) != 0) {
@@ -161,8 +167,8 @@ function data_handler(dat) {
 		sel = undefined
 		btn = dat[8] * 256 + dat[7]
 		switch (btn) {
-			case 0x20: sel = 'DisplayPort1'; break
-			case 0x10: sel = 'DisplayPort2'; break
+			case 0x20: sel = input_source_table['DisplayPort1'] ? 'DisplayPort1' : 'DisplayPort'; break
+			case 0x10: sel = input_source_table['DisplayPort2'] ? 'DisplayPort2' : undefined; break
 			case 0x08: sel = 'HDMI'; break
 			case 0x04: sel = 'DVI'; break
 		}
