@@ -7,21 +7,27 @@ import ctypes
 import struct
 
 device_id_pairs = [
-    [0x056D, 0x4059], # EV2760
     [0x056D, 0x4014], # EV2750
+    [0x056D, 0x4059], # EV2760
+    [0x056D, 0x4065], # EV3895
 ]
 
 def get_input_source_table(model):
     table = {
+        'EV2750': {
+            'DVI': 0x0200,
+            'DisplayPort': 0x0300,
+            'HDMI': 0x0400 },
         'EV2760': {
             'DVI': 0x0200,
             'DisplayPort1': 0x0300,
             'DisplayPort2': 0x0301,
             'HDMI': 0x0400 },
-        'EV2750': {
-            'DVI': 0x0200,
+         'EV3895': {
             'DisplayPort': 0x0300,
-            'HDMI': 0x0400 },
+            'USB-C': 0x0301,
+            'HDMI1': 0x0400,
+            'HDMI2': 0x0401 },
     }
     return table[model]
 
@@ -30,6 +36,10 @@ def lookup_input_source_alias(input):
         'DP': 'DisplayPort',
         'DP1': 'DisplayPort1',
         'DP2': 'DisplayPort2',
+        'TypeC': 'USB-C',
+        'Type-C': 'USB-C',
+        'USB': 'USB-C',
+        'USBC': 'USB-C',
     }
     for k in table:
         if k.lower() == input.lower():
