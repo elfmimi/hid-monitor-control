@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 # from __future__ import print_function
 
 import sys
@@ -10,10 +12,16 @@ device_id_pairs = [
     [0x056D, 0x4014], # EV2750
     [0x056D, 0x4059], # EV2760
     [0x056D, 0x4065], # EV3895
+    [0x056D, 0x4027], # EV2456
 ]
 
 def get_input_source_table(model):
     table = {
+         'EV2456': {
+            'D-SUB': 0x100,
+            'DVI': 0x0200,
+            'DisplayPort': 0x0300,
+            'HDMI': 0x0400 },
         'EV2750': {
             'DVI': 0x0200,
             'DisplayPort': 0x0300,
@@ -40,6 +48,7 @@ def lookup_input_source_alias(input):
         'Type-C': 'USB-C',
         'USB': 'USB-C',
         'USBC': 'USB-C',
+        'DSUB': 'D-SUB',
     }
     for k in table:
         if k.lower() == input.lower():
@@ -82,11 +91,11 @@ def set_val(dev, num, val):
     dev.send_feature_report(buf)
 
     tmp = dev.get_feature_report(7, 8)
-    if tmp[0] != 0x07:
-        raise Exception
-    for i in range(1,7):
-        if tmp[i] != buf[i]:
-            raise Exception
+    #if tmp[0] != 0x07:
+    #    raise Exception
+    #for i in range(1,7):
+    #    if tmp[i] != buf[i]:
+    #        raise Exception
 
 def get_val(dev, num):
     buf = [0x03, 0x01, 0xFF, num & 255, num >> 8]
