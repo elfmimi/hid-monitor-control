@@ -3,12 +3,16 @@ require 'hidapi'
 # https://rubygems.org/gems/hidapi/
 
 device_id_pairs = [
+  [0x056D, 0x4027], # EV2456
   [0x056D, 0x4014], # EV2750
   [0x056D, 0x4059], # EV2760
   [0x056D, 0x4065], # EV3895
 ]
 
 $input_source_table = {
+
+
+  :EV2456 => { :D-SUB => 0x0100, :DVI => 0x200, :DisplayPort => 0x0300, :HDMI => 0x0400 },
   :EV2750 => { :DVI => 0x0200, :DisplayPort => 0x0300, :HDMI => 0x0400 },
   :EV2760 => { :DVI => 0x0200, :DisplayPort1 => 0x0300, :DisplayPort2 => 0x0301, :HDMI => 0x0400 },
   :EV3895 => { :DisplayPort => 0x0300, :'USB-C' => 0x0301, :HDMI1 => 0x0400, :HDMI2 => 0x0401 },
@@ -22,6 +26,7 @@ $alias_table = {
   :'Type-C' => :'USB-C',
   :USB => :'USB-C',
   :USBC => :'USB-C',
+  :DSUB => :'D-SUB',
 }
 
 def print_usage(input_source_table = nil)

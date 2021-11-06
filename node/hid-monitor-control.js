@@ -13,6 +13,7 @@ HID = require('node-hid');
 HID.setDriverType('libusb');
 
 device_id_pairs = [
+    (0x056D, 0x4027), // EV2456
     (0x056D, 0x4014), // EV2750
     (0x056D, 0x4059), // EV2760
     (0x056D, 0x4065), // EV3895
@@ -20,6 +21,11 @@ device_id_pairs = [
 
 function get_input_source_table(model) {
     table = {
+        'EV2456': {
+            'D-SUB': 0x100,
+            'DVI': 0x0200,
+            'DisplayPort': 0x0300,
+            'HDMI': 0x0400 },
         'EV2750': {
             'DVI': 0x0200,
             'DisplayPort': 0x0300,
@@ -47,6 +53,7 @@ function lookup_input_source_alias(input) {
         'Type-C': 'USB-C',
         'USB': 'USB-C',
         'USBC': 'USB-C',
+        'DSUB': 'D-SUB',
 	}
 	
 	key = Object.keys(table).find(k => k.toLowerCase() == input.toLowerCase())
