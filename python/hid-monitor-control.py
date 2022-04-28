@@ -90,6 +90,9 @@ def set_val(dev, num, val):
     buf += [0] * (40 - len(buf)) # Windows need this stuffing
     dev.send_feature_report(buf)
 
+    # wait
+    time.sleep(0.05)
+
     tmp = dev.get_feature_report(7, 8)
     #if tmp[0] != 0x07:
     #    raise Exception
