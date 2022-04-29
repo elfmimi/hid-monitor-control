@@ -94,11 +94,11 @@ def set_val(dev, num, val):
     time.sleep(0.05)
 
     tmp = dev.get_feature_report(7, 8)
-    #if tmp[0] != 0x07:
-    #    raise Exception
-    #for i in range(1,7):
-    #    if tmp[i] != buf[i]:
-    #        raise Exception
+    if tmp[0] != 0x07:
+        raise Exception
+    for i in range(1,7):
+        if tmp[i] != buf[i]:
+            raise Exception
 
 def get_val(dev, num):
     buf = [0x03, 0x01, 0xFF, num & 255, num >> 8]
