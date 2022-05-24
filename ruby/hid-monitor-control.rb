@@ -12,7 +12,7 @@ device_id_pairs = [
 $input_source_table = {
 
 
-  :EV2456 => { :D-SUB => 0x0100, :DVI => 0x200, :DisplayPort => 0x0300, :HDMI => 0x0400 },
+  :EV2456 => { :'D-SUB' => 0x0100, :DVI => 0x200, :DisplayPort => 0x0300, :HDMI => 0x0400 },
   :EV2750 => { :DVI => 0x0200, :DisplayPort => 0x0300, :HDMI => 0x0400 },
   :EV2760 => { :DVI => 0x0200, :DisplayPort1 => 0x0300, :DisplayPort2 => 0x0301, :HDMI => 0x0400 },
   :EV3895 => { :DisplayPort => 0x0300, :'USB-C' => 0x0301, :HDMI1 => 0x0400, :HDMI2 => 0x0401 },
